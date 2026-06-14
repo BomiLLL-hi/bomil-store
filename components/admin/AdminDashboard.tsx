@@ -652,13 +652,11 @@ export default function AdminDashboard({ waitingOrders, readySessions, readyOrde
           if (res.ok) {
             const { sessions } = await res.json() as { sessions: ChatSession[] }
             if (sessions) {
-              setLiveQuestionSessions(sessions)
-              setUnreadMap(prev => {
-                const next = { ...prev }
-                sessions.forEach((s: ChatSession) => {
-                  if (s.id !== currentId && !next[s.id]) next[s.id] = 0
-                })
-                return next
+              setLiveQuestionSessions(prev => {
+                const prevIds = new Set(prev.map(s => s.id))
+                const newOnes = sessions.filter((s: ChatSession) => !prevIds.has(s.id))
+                if (newOnes.length === 0) return prev
+                return [...newOnes, ...prev]
               })
             }
           }
