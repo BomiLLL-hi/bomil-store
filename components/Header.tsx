@@ -24,16 +24,12 @@ export function HeaderInner() {
             <span className="text-white">BOMIL</span>
             <span className="text-[#8b5cf6]"> SHOP</span>
           </Link>
-          <div className="hidden md:flex items-center gap-2">
-            {NAV_LINKS.map(({ href, label }, i) => (
+          <div className="hidden md:flex items-center gap-4">
+            {NAV_LINKS.map(({ href, label }) => (
               <Link
                 key={href}
                 href={href}
-                className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
-                  i === 0
-                    ? 'bg-[#8b5cf6]/15 border border-[#8b5cf6]/40 text-[#a78bfa] hover:bg-[#8b5cf6]/25 hover:border-[#8b5cf6]/70'
-                    : 'bg-[#1a1a1a] border border-[#333333] text-[#cccccc] hover:bg-[#222222] hover:border-[#555555]'
-                }`}
+                className="text-sm font-semibold text-[#a78bfa] hover:text-[#c4b5fd] transition-colors whitespace-nowrap"
               >
                 {label}
               </Link>
