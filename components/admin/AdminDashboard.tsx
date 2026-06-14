@@ -7,6 +7,8 @@ import type { Order, ChatSession, ChatMessage } from '@/lib/types'
 
 type Tab = 'waiting' | 'ready' | 'support' | 'reviews' | 'faq'
 
+const FLOW_BUTTONS = new Set(['__reset', 'Получить заказ', 'Задать вопрос', 'Связаться с тех поддержкой'])
+
 interface Props {
   waitingOrders: Order[]
   readySessions: ChatSession[]
@@ -146,7 +148,6 @@ function ChatPane({
   }, [messages.length, tempMessages.length])
 
   const allMessages = [...messages, ...tempMessages]
-  const FLOW_BUTTONS = new Set(['__reset', 'Получить заказ', 'Задать вопрос', 'Связаться с тех поддержкой'])
   const visibleMessages = allMessages.filter(msg =>
     msg.sender_type !== 'bot' &&
     !(msg.sender_type === 'user' && FLOW_BUTTONS.has(msg.content))
@@ -658,10 +659,12 @@ export default function AdminDashboard({ waitingOrders, readySessions, readyOrde
             const { sessions } = await sRes.json() as { sessions: ChatSession[] }
             if (sessions) {
               setLiveQuestionSessions(prev => {
+                const freshMap = new Map(sessions.map((s: ChatSession) => [s.id, s]))
                 const prevIds = new Set(prev.map(s => s.id))
                 const newOnes = sessions.filter((s: ChatSession) => !prevIds.has(s.id))
-                if (newOnes.length === 0) return prev
-                return [...newOnes, ...prev]
+                const updated = prev.map(s => freshMap.get(s.id) ?? s)
+                if (newOnes.length === 0 && updated.every((s, i) => s === prev[i])) return prev
+                return [...newOnes, ...updated]
               })
             }
           }
@@ -685,7 +688,7 @@ export default function AdminDashboard({ waitingOrders, readySessions, readyOrde
                   if (sid === currentId) return // открытая сессия — не считаем
                   const prevMsgs = prevMap[sid] ?? []
                   const prevIds = new Set(prevMsgs.map(m => m.id))
-                  const newUserMsgs = msgs.filter(m => !prevIds.has(m.id) && m.sender_type === 'user')
+                  const newUserMsgs = msgs.filter(m => !prevIds.has(m.id) && m.sender_type === 'user' && !FLOW_BUTTONS.has(m.content))
                   if (newUserMsgs.length > 0) next[sid] = (next[sid] ?? 0) + newUserMsgs.length
                 })
                 return next
@@ -798,11 +801,14 @@ export default function AdminDashboard({ waitingOrders, readySessions, readyOrde
               ? <p className="text-[#555555] text-sm text-center py-8">Нет заказов</p>
               : readySessions.map(s => {
                 const msgs = messageMap[s.id] ?? []
+                const lastMessage = [...msgs].reverse().find(m =>
+                  m.sender_type !== 'bot' && !(m.sender_type === 'user' && FLOW_BUTTONS.has(m.content))
+                )
                 return (
                   <SessionCard
                     key={s.id} session={s}
                     order={readyOrders.find(o => o.id === s.order_id)}
-                    lastMessage={msgs.at(-1)}
+                    lastMessage={lastMessage}
                     unread={unreadMap[s.id] ?? 0}
                     active={selectedId === s.id}
                     onClick={() => handleSelect(s.id)}
@@ -815,10 +821,13 @@ export default function AdminDashboard({ waitingOrders, readySessions, readyOrde
               ? <p className="text-[#555555] text-sm text-center py-8">Нет обращений</p>
               : liveQuestionSessions.map(s => {
                 const msgs = messageMap[s.id] ?? []
+                const lastMessage = [...msgs].reverse().find(m =>
+                  m.sender_type !== 'bot' && !(m.sender_type === 'user' && FLOW_BUTTONS.has(m.content))
+                )
                 return (
                   <SessionCard
                     key={s.id} session={s}
-                    lastMessage={msgs.at(-1)}
+                    lastMessage={lastMessage}
                     unread={unreadMap[s.id] ?? 0}
                     active={selectedId === s.id}
                     onClick={() => handleSelect(s.id)}
