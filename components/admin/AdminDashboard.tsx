@@ -664,23 +664,47 @@ export default function AdminDashboard({ waitingOrders, readySessions, readyOrde
     return () => { supabase.removeChannel(channel) }
   }, [])
 
+  // Polling списка обращений (обход ограничений RLS на Realtime)
+  useEffect(() => {
+    if (tab !== 'support') return
+    let cancelled = false
+
+    async function refreshSessions() {
+      const res = await fetch('/api/admin/sessions', { cache: 'no-store' })
+      if (!res.ok || cancelled) return
+      const { sessions } = await res.json()
+      if (sessions) {
+        setLiveQuestionSessions((prev: ChatSession[]) => {
+          const prevIds = new Set(prev.map((s: ChatSession) => s.id))
+          const hasNew = sessions.some((s: ChatSession) => !prevIds.has(s.id))
+          if (!hasNew && sessions.length === prev.length) return prev
+          return sessions
+        })
+      }
+    }
+
+    refreshSessions()
+    const interval = setInterval(refreshSessions, 5000)
+    return () => { cancelled = true; clearInterval(interval) }
+  }, [tab])
+
   // Polling свежих сообщений для открытой сессии (обход ограничений RLS на Realtime)
   useEffect(() => {
     if (!selectedId || tab === 'waiting') return
     let cancelled = false
 
-    async function refresh() {
-      const res = await fetch(`/api/admin/messages?sessionId=${selectedId}`)
+    async function refreshMessages() {
+      const res = await fetch(`/api/admin/messages?sessionId=${selectedId}`, { cache: 'no-store' })
       if (!res.ok || cancelled) return
-      const { messages } = await res.json()
-      if (messages) {
-        setMessageMap(prev => ({ ...prev, [selectedId]: messages }))
+      const { messages: fetched } = await res.json()
+      if (fetched) {
+        setMessageMap(prev => ({ ...prev, [selectedId]: fetched }))
         setUnreadMap(prev => ({ ...prev, [selectedId]: 0 }))
       }
     }
 
-    refresh()
-    const interval = setInterval(refresh, 3000)
+    refreshMessages()
+    const interval = setInterval(refreshMessages, 3000)
     return () => { cancelled = true; clearInterval(interval) }
   }, [selectedId, tab])
 

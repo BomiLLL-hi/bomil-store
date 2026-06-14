@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { createServerSupabase } from '@/lib/supabase-server'
 import { createServiceSupabase } from '@/lib/supabase-service'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const supabase = await createServerSupabase()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -15,15 +15,11 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
-  const sessionId = new URL(req.url).searchParams.get('sessionId')
-  if (!sessionId) return NextResponse.json({ error: 'Missing sessionId' }, { status: 400 })
-
-  const { data: messages, error } = await db
-    .from('chat_messages')
+  const { data: sessions } = await db
+    .from('chat_sessions')
     .select('*')
-    .eq('session_id', sessionId)
-    .order('created_at', { ascending: true })
+    .eq('type', 'question')
+    .order('updated_at', { ascending: false })
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ messages })
+  return NextResponse.json({ sessions: sessions ?? [] })
 }
