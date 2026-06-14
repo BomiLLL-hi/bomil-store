@@ -151,7 +151,7 @@ function AuthForm() {
                   {loading ? t('checkout.loading') : t('auth.login_btn')}
                 </button>
                 <button type="button" onClick={() => switchTab('forgot')} className="w-full text-center text-[#555555] hover:text-[#888888] text-xs transition-colors">
-                  Забыл пароль?
+                  Забыли пароль?
                 </button>
               </form>
 
