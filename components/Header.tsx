@@ -19,20 +19,26 @@ export function HeaderInner() {
       {/* Main header row */}
       <div className="h-16 flex items-center justify-between gap-4 px-4 md:px-6 max-w-7xl mx-auto w-full">
         {/* Logo + nav links */}
-        <div className="flex items-center gap-4 flex-shrink-0">
+        <div className="flex items-center gap-6 flex-shrink-0">
           <Link href="/" className="font-bold text-xl tracking-tight">
             <span className="text-white">BOMIL</span>
             <span className="text-[#8b5cf6]"> SHOP</span>
           </Link>
-          {NAV_LINKS.map(({ href, label }) => (
-            <Link
-              key={href}
-              href={href}
-              className="hidden md:block text-sm text-[#888888] hover:text-white transition-colors whitespace-nowrap"
-            >
-              {label}
-            </Link>
-          ))}
+          <div className="hidden md:flex items-center gap-2">
+            {NAV_LINKS.map(({ href, label }, i) => (
+              <Link
+                key={href}
+                href={href}
+                className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                  i === 0
+                    ? 'bg-[#8b5cf6]/15 border border-[#8b5cf6]/40 text-[#a78bfa] hover:bg-[#8b5cf6]/25 hover:border-[#8b5cf6]/70'
+                    : 'bg-[#1a1a1a] border border-[#333333] text-[#cccccc] hover:bg-[#222222] hover:border-[#555555]'
+                }`}
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
         </div>
 
         {/* Desktop search */}
