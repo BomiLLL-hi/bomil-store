@@ -19,7 +19,7 @@ export function HeaderInner() {
       {/* Main header row */}
       <div className="h-16 flex items-center justify-between gap-4 px-4 md:px-6 max-w-7xl mx-auto w-full">
         {/* Logo + nav links */}
-        <div className="flex items-center gap-6 flex-shrink-0">
+        <div className="flex items-center gap-10 flex-shrink-0">
           <Link href="/" className="font-bold text-xl tracking-tight">
             <span className="text-white">BOMIL</span>
             <span className="text-[#8b5cf6]"> SHOP</span>
