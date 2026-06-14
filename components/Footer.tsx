@@ -15,7 +15,7 @@ export default function Footer() {
         <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2">
           {[
             { label: t('footer.terms'), href: '/terms' },
-            { label: t('footer.refund'), href: '/refund' },
+            { label: t('footer.refund'), href: '/delivery' },
             { label: t('footer.privacy'), href: '/privacy' },
             { label: 'Контакты', href: '/contacts' },
           ].map(({ label, href }) => (

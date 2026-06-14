@@ -139,7 +139,7 @@ export default function CheckoutPage() {
               {t('checkout.terms')}{' '}
               <Link href="/terms" className="text-[#8b5cf6] hover:underline">Terms</Link>
               {' '}&{' '}
-              <Link href="/refund" className="text-[#8b5cf6] hover:underline">Refund Policy</Link>
+              <Link href="/delivery" className="text-[#8b5cf6] hover:underline">Refund Policy</Link>
             </span>
           </label>
         </div>
