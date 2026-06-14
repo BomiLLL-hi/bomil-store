@@ -635,6 +635,10 @@ export default function AdminDashboard({ waitingOrders, readySessions, readyOrde
   // Счётчики новых сообщений от клиентов (сбрасываются при открытии сессии)
   const [unreadMap, setUnreadMap] = useState<Record<string, number>>({})
 
+  // ref для messageMap чтобы сравнивать без stale closure
+  const messageMapRef = useRef<Record<string, ChatMessage[]>>({})
+  useEffect(() => { messageMapRef.current = messageMap }, [messageMap])
+
   // Синхронизируем рефы при каждом изменении state
   useEffect(() => { tabRef.current = tab }, [tab])
   useEffect(() => { selectedIdRef.current = selectedId }, [selectedId])
@@ -645,12 +649,13 @@ export default function AdminDashboard({ waitingOrders, readySessions, readyOrde
       const currentTab = tabRef.current
       const currentId = selectedIdRef.current
 
-      // Обновляем список сессий для вкладки поддержки
+      // Обновляем список сессий + все сообщения для вкладки поддержки
       if (currentTab === 'support') {
         try {
-          const res = await fetch('/api/admin/sessions', { cache: 'no-store' })
-          if (res.ok) {
-            const { sessions } = await res.json() as { sessions: ChatSession[] }
+          // Сессии
+          const sRes = await fetch('/api/admin/sessions', { cache: 'no-store' })
+          if (sRes.ok) {
+            const { sessions } = await sRes.json() as { sessions: ChatSession[] }
             if (sessions) {
               setLiveQuestionSessions(prev => {
                 const prevIds = new Set(prev.map(s => s.id))
@@ -660,18 +665,45 @@ export default function AdminDashboard({ waitingOrders, readySessions, readyOrde
               })
             }
           }
+
+          // Все сообщения для всех сессий — обновляем map и unread счётчики
+          const mRes = await fetch('/api/admin/all-messages', { cache: 'no-store' })
+          if (mRes.ok) {
+            const { messages: allFetched } = await mRes.json() as { messages: ChatMessage[] }
+            if (allFetched) {
+              const newMap: Record<string, ChatMessage[]> = {}
+              allFetched.forEach(m => {
+                if (!newMap[m.session_id]) newMap[m.session_id] = []
+                newMap[m.session_id].push(m)
+              })
+
+              // Считаем новые сообщения от пользователей по каждой сессии
+              const prevMap = messageMapRef.current
+              setUnreadMap(prev => {
+                const next = { ...prev }
+                Object.entries(newMap).forEach(([sid, msgs]) => {
+                  if (sid === currentId) return // открытая сессия — не считаем
+                  const prevMsgs = prevMap[sid] ?? []
+                  const prevIds = new Set(prevMsgs.map(m => m.id))
+                  const newUserMsgs = msgs.filter(m => !prevIds.has(m.id) && m.sender_type === 'user')
+                  if (newUserMsgs.length > 0) next[sid] = (next[sid] ?? 0) + newUserMsgs.length
+                })
+                return next
+              })
+
+              setMessageMap(newMap)
+            }
+          }
         } catch {}
       }
 
-      // Обновляем сообщения для открытой сессии
+      // Для открытой сессии — дополнительный быстрый refresh каждые 3с
       if (currentId && currentTab !== 'waiting') {
         try {
           const res = await fetch(`/api/admin/messages?sessionId=${currentId}`, { cache: 'no-store' })
           if (res.ok) {
             const { messages: fetched } = await res.json() as { messages: ChatMessage[] }
-            if (fetched) {
-              setMessageMap(prev => ({ ...prev, [currentId]: fetched }))
-            }
+            if (fetched) setMessageMap(prev => ({ ...prev, [currentId]: fetched }))
           }
         } catch {}
       }
@@ -680,7 +712,7 @@ export default function AdminDashboard({ waitingOrders, readySessions, readyOrde
     poll()
     const interval = setInterval(poll, 3000)
     return () => clearInterval(interval)
-  }, []) // пустые deps — интервал живёт всё время монтирования компонента
+  }, [])
 
   function handleSelect(id: string) {
     setSelectedId(id)
