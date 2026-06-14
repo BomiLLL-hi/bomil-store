@@ -26,6 +26,10 @@ export function useLiveChat(userId?: string) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Ref для текущих сообщений — чтобы не читать state внутри updater
+  const messagesRef = useRef<ChatMessage[]>([])
+  useEffect(() => { messagesRef.current = messages }, [messages])
+
   // Polling ответов оператора и бот-уведомлений каждые 3 секунды
   // (Realtime заблокирован RLS для анонимных пользователей)
   const sessionIdRef = useRef<string | null>(null)
@@ -40,20 +44,26 @@ export function useLiveChat(userId?: string) {
         if (!res.ok) return
         const { messages: fetched } = await res.json() as { messages: ChatMessage[] }
         if (!fetched) return
+
+        const existingIds = new Set(messagesRef.current.map(m => m.id))
+        const incoming = fetched.filter(m =>
+          !existingIds.has(m.id) &&
+          (m.sender_type === 'operator' || m.sender_type === 'bot')
+        )
+        if (incoming.length === 0) return
+
+        // Побочные эффекты вне setState updater
+        if (!isOpenRef.current) {
+          const operatorCount = incoming.filter(m => m.sender_type === 'operator').length
+          if (operatorCount > 0) setUnreadCount(c => c + operatorCount)
+          playSound()
+        }
+
         setMessages(prev => {
-          const existingIds = new Set(prev.map(m => m.id))
-          const incoming = fetched.filter(m =>
-            !existingIds.has(m.id) &&
-            (m.sender_type === 'operator' || m.sender_type === 'bot')
-          )
-          if (incoming.length === 0) return prev
-          incoming.forEach(m => {
-            if (!isOpenRef.current) {
-              if (m.sender_type === 'operator') setUnreadCount(c => c + 1)
-              playSound()
-            }
-          })
-          return [...prev, ...incoming]
+          const prevIds = new Set(prev.map(m => m.id))
+          const toAdd = incoming.filter(m => !prevIds.has(m.id))
+          if (toAdd.length === 0) return prev
+          return [...prev, ...toAdd]
         })
       } catch {}
     }
@@ -104,7 +114,7 @@ export function useLiveChat(userId?: string) {
     if (now - lastSentRef.current < COOLDOWN_MS) return
     lastSentRef.current = now
     setSending(true)
-    if (content === 'Получить заказ' || content === 'Задать вопрос' || content === 'Связаться с тех поддержкой') {
+    if (content === 'Получить заказ' || content === 'Связаться с тех поддержкой') {
       setShowFlowButtons(false)
     }
 
@@ -128,10 +138,10 @@ export function useLiveChat(userId?: string) {
         ...(botMessage ? [botMessage] : []),
       ])
 
-      // Обновляем локальный тип сессии
-      if (content === 'Получить заказ' || content === 'Задать вопрос' || content === 'Связаться с тех поддержкой') {
+      // Обновляем локальный тип сессии (ticket_number не трогаем — он постоянный)
+      if (content === 'Получить заказ' || content === 'Связаться с тех поддержкой') {
         const updatedType = content === 'Получить заказ' ? 'order' : 'question'
-        setSession(s => s ? { ...s, type: updatedType, order_id: null, ticket_number: null } : s)
+        setSession(s => s ? { ...s, type: updatedType, order_id: null } : s)
         setShowFlowButtons(false)
       }
     } catch {
@@ -151,7 +161,7 @@ export function useLiveChat(userId?: string) {
       })
       const { botMessage } = await res.json()
       if (botMessage) setMessages(prev => [...prev, botMessage])
-      setSession(s => s ? { ...s, type: null, order_id: null, ticket_number: null } : s)
+      setSession(s => s ? { ...s, type: null, order_id: null } : s)
       setTimeout(() => setShowFlowButtons(true), 300)
     } catch {}
     setSending(false)
@@ -183,5 +193,6 @@ function playSound() {
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25)
     osc.start(ctx.currentTime)
     osc.stop(ctx.currentTime + 0.25)
+    osc.onended = () => ctx.close()
   } catch {}
 }

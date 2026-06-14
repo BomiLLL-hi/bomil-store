@@ -258,7 +258,7 @@ function ChatWidgetMobile({ isOpen, messages, sending, showFlowButtons, initiali
           </div>
         ) : (
           <div className="flex flex-col px-3 py-3">
-            {(!session?.ticket_number && !session?.order_id) && (
+            {(session?.type !== 'question' || !session?.ticket_number) && !session?.order_id && (
               <button onClick={handleReset} disabled={sending} className="w-full text-xs text-[#8b5cf6]/70 mb-2 text-left">← Вернуться назад</button>
             )}
             <div className="flex gap-2">
