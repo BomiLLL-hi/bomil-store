@@ -96,7 +96,7 @@ export function useLiveChat(userId?: string) {
     if (now - lastSentRef.current < COOLDOWN_MS) return
     lastSentRef.current = now
     setSending(true)
-    if (content === 'Получить заказ' || content === 'Задать вопрос') {
+    if (content === 'Получить заказ' || content === 'Задать вопрос' || content === 'Связаться с тех поддержкой') {
       setShowFlowButtons(false)
     }
 
@@ -121,7 +121,7 @@ export function useLiveChat(userId?: string) {
       ])
 
       // Обновляем локальный тип сессии
-      if (content === 'Получить заказ' || content === 'Задать вопрос') {
+      if (content === 'Получить заказ' || content === 'Задать вопрос' || content === 'Связаться с тех поддержкой') {
         const updatedType = content === 'Получить заказ' ? 'order' : 'question'
         setSession(s => s ? { ...s, type: updatedType, order_id: null, ticket_number: null } : s)
         setShowFlowButtons(false)

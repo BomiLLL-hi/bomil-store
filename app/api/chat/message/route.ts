@@ -3,7 +3,7 @@ import { createServiceSupabase } from '@/lib/supabase-service'
 import { sendToManager } from '@/lib/telegram'
 import type { ChatSession } from '@/lib/types'
 
-const SKIP_FORWARD = new Set(['__reset', 'Получить заказ', 'Задать вопрос'])
+const SKIP_FORWARD = new Set(['__reset', 'Получить заказ', 'Задать вопрос', 'Связаться с тех поддержкой'])
 
 async function buildTelegramText(supabase: ReturnType<typeof createServiceSupabase>, session: ChatSession, content: string): Promise<string> {
   const lines: string[] = []
@@ -47,9 +47,9 @@ async function getBotResponse(session: ChatSession, content: string): Promise<st
     await supabase.from('chat_sessions').update({ type: 'order', order_id: null, ticket_number: null }).eq('id', session.id)
     return 'Введите номер вашего заказа (например: MM2-001000):'
   }
-  if (content === 'Задать вопрос') {
+  if (content === 'Задать вопрос' || content === 'Связаться с тех поддержкой') {
     await supabase.from('chat_sessions').update({ type: 'question', order_id: null, ticket_number: null }).eq('id', session.id)
-    return 'Опишите ваш вопрос как можно подробнее:'
+    return 'Напишите пожалуйста ваш вопрос'
   }
 
   if (!session.type) return null
@@ -99,7 +99,7 @@ async function getBotResponse(session: ChatSession, content: string): Promise<st
     const { data: ticketSeq } = await supabase.rpc('next_ticket_number')
     const ticketNumber = `TKT-${String(ticketSeq ?? 1000).padStart(6, '0')}`
     await supabase.from('chat_sessions').update({ ticket_number: ticketNumber }).eq('id', session.id)
-    return `Ваше обращение ${ticketNumber} принято! ☺️\n\nВ ближайшее время с вами свяжется поддержка.`
+    return `Спасибо за ваше обращение. В ближайшее время вам ответит модератор.`
   }
 
   // Последующие сообщения — бот молчит, ждём оператора

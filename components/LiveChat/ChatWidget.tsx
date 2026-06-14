@@ -249,11 +249,11 @@ function ChatWidgetMobile({ isOpen, messages, sending, showFlowButtons, initiali
               📦 Получить заказ
             </button>
             <button
-              onClick={() => handleFlowClick('Задать вопрос')}
+              onClick={() => handleFlowClick('Связаться с тех поддержкой')}
               disabled={sending || !initialized}
               className="w-full py-2.5 bg-transparent border border-[#8b5cf6] disabled:opacity-40 text-[#8b5cf6] text-sm font-semibold rounded-xl"
             >
-              💬 Задать вопрос
+              💬 Связаться с тех поддержкой
             </button>
           </div>
         ) : (
@@ -412,11 +412,11 @@ function ChatWidgetDesktop({ isOpen, messages, sending, showFlowButtons, initial
               📦 Получить заказ
             </button>
             <button
-              onClick={() => handleFlowClick('Задать вопрос')}
+              onClick={() => handleFlowClick('Связаться с тех поддержкой')}
               disabled={sending || !initialized}
               className="w-full py-2.5 bg-transparent border border-[#8b5cf6] disabled:opacity-40 text-[#8b5cf6] hover:bg-[#8b5cf6]/10 text-sm font-semibold rounded-xl transition-colors"
             >
-              💬 Задать вопрос
+              💬 Связаться с тех поддержкой
             </button>
           </div>
         ) : (

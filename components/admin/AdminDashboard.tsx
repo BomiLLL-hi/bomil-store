@@ -146,7 +146,7 @@ function ChatPane({
   }, [messages.length, tempMessages.length])
 
   const allMessages = [...messages, ...tempMessages]
-  const FLOW_BUTTONS = new Set(['__reset', 'Получить заказ', 'Задать вопрос'])
+  const FLOW_BUTTONS = new Set(['__reset', 'Получить заказ', 'Задать вопрос', 'Связаться с тех поддержкой'])
   const visibleMessages = allMessages.filter(msg =>
     msg.sender_type !== 'bot' &&
     !(msg.sender_type === 'user' && FLOW_BUTTONS.has(msg.content))
@@ -613,6 +613,7 @@ function FaqPanel({ onBack }: { onBack: () => void }) {
 export default function AdminDashboard({ waitingOrders, readySessions, readyOrders, questionSessions, messages }: Props) {
   const [tab, setTab] = useState<Tab>('waiting')
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const assignedSessions = useRef<Set<string>>(new Set())
 
   // Карта сообщений по сессиям — обновляется в реальном времени
   const [messageMap, setMessageMap] = useState<Record<string, ChatMessage[]>>(() => {
@@ -654,6 +655,18 @@ export default function AdminDashboard({ waitingOrders, readySessions, readyOrde
   function handleSelect(id: string) {
     setSelectedId(id)
     setUnreadMap(prev => ({ ...prev, [id]: 0 }))
+
+    if (tab === 'support' && !assignedSessions.current.has(id)) {
+      const session = questionSessions.find(s => s.id === id)
+      if (session && !session.operator_id) {
+        assignedSessions.current.add(id)
+        fetch('/api/admin/assign', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId: id }),
+        }).catch(() => {})
+      }
+    }
   }
 
   function handleSent(msg: ChatMessage) {
