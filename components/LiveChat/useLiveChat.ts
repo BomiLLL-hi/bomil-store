@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { createBrowserSupabase } from '@/lib/supabase-browser'
 import type { ChatMessage, ChatSession } from '@/lib/types'
 
 const COOLDOWN_MS = 500
@@ -27,32 +26,41 @@ export function useLiveChat(userId?: string) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Realtime подписка на ответы операторов (Phase 5)
+  // Polling ответов оператора и бот-уведомлений каждые 3 секунды
+  // (Realtime заблокирован RLS для анонимных пользователей)
+  const sessionIdRef = useRef<string | null>(null)
+  useEffect(() => { sessionIdRef.current = session?.id ?? null }, [session?.id])
+
   useEffect(() => {
-    if (!session) return
-    const supabase = createBrowserSupabase()
-    const channel = supabase
-      .channel(`chat:${session.id}`)
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: `session_id=eq.${session.id}` },
-        (payload) => {
-          const msg = payload.new as ChatMessage
-          if (msg.sender_type === 'operator') {
-            setMessages(prev => {
-              if (prev.find(m => m.id === msg.id)) return prev
-              return [...prev, msg]
-            })
+    async function pollOperatorMessages() {
+      const sid = sessionIdRef.current
+      if (!sid) return
+      try {
+        const res = await fetch(`/api/chat/messages?sessionId=${sid}`, { cache: 'no-store' })
+        if (!res.ok) return
+        const { messages: fetched } = await res.json() as { messages: ChatMessage[] }
+        if (!fetched) return
+        setMessages(prev => {
+          const existingIds = new Set(prev.map(m => m.id))
+          const incoming = fetched.filter(m =>
+            !existingIds.has(m.id) &&
+            (m.sender_type === 'operator' || m.sender_type === 'bot')
+          )
+          if (incoming.length === 0) return prev
+          incoming.forEach(m => {
             if (!isOpenRef.current) {
-              setUnreadCount(c => c + 1)
+              if (m.sender_type === 'operator') setUnreadCount(c => c + 1)
               playSound()
             }
-          }
-        },
-      )
-      .subscribe()
-    return () => { supabase.removeChannel(channel) }
-  }, [session?.id])
+          })
+          return [...prev, ...incoming]
+        })
+      } catch {}
+    }
+
+    const interval = setInterval(pollOperatorMessages, 3000)
+    return () => clearInterval(interval)
+  }, [])
 
   async function init() {
     if (initStartedRef.current) return
