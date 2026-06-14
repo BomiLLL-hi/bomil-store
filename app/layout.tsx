@@ -7,7 +7,6 @@ import { AuthProvider } from '@/components/AuthProvider'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import CartDrawer from '@/components/CartDrawer'
-import LiveChat from '@/components/LiveChat'
 import { getUsdRate } from '@/lib/supabase'
 
 const inter = Inter({
@@ -51,7 +50,6 @@ export default async function RootLayout({
             <CartDrawer />
             <main className="flex-1">{children}</main>
             <Footer />
-            <LiveChat />
           </AuthProvider>
         </AppProvider>
       </body>

@@ -114,8 +114,7 @@ export default function RefundPage() {
         <div>
           <p className="text-white font-semibold text-sm mb-1">Гарантия безопасности</p>
           <p className="text-[#888888] text-sm leading-relaxed">
-            Если у вас возникли вопросы или проблемы с заказом — напишите нам в{' '}
-            <span className="text-[#8b5cf6]">Live Chat</span> в правом нижнем углу сайта. Мы всё решим.
+            Если у вас возникли вопросы или проблемы с заказом — напишите нам в Telegram или через форму техподдержки на сайте. Мы всё решим.
           </p>
         </div>
       </div>
