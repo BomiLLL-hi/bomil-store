@@ -17,6 +17,7 @@ export default function Footer() {
             { label: t('footer.terms'), href: '/terms' },
             { label: t('footer.refund'), href: '/refund' },
             { label: t('footer.privacy'), href: '/privacy' },
+            { label: 'Контакты', href: '/contacts' },
           ].map(({ label, href }) => (
             <Link
               key={href}
