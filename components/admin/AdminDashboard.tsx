@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { createBrowserSupabase } from '@/lib/supabase-browser'
 import type { Order, ChatSession, ChatMessage } from '@/lib/types'
@@ -611,14 +612,15 @@ function FaqPanel({ onBack }: { onBack: () => void }) {
 
 // ─── Главный компонент ────────────────────────────────────────────────────────
 export default function AdminDashboard({ waitingOrders, readySessions, readyOrders, questionSessions, messages }: Props) {
+  const router = useRouter()
   const [tab, setTab] = useState<Tab>('waiting')
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const assignedSessions = useRef<Set<string>>(new Set())
 
-  // Живой список обращений тех поддержки — обновляется через Realtime
+  // Живой список обращений тех поддержки
   const [liveQuestionSessions, setLiveQuestionSessions] = useState<ChatSession[]>(questionSessions)
 
-  // Карта сообщений по сессиям — обновляется в реальном времени
+  // Карта сообщений по сессиям
   const [messageMap, setMessageMap] = useState<Record<string, ChatMessage[]>>(() => {
     const map: Record<string, ChatMessage[]> = {}
     messages.forEach(m => {
@@ -631,7 +633,39 @@ export default function AdminDashboard({ waitingOrders, readySessions, readyOrde
   // Счётчики новых сообщений от клиентов (сбрасываются при открытии сессии)
   const [unreadMap, setUnreadMap] = useState<Record<string, number>>({})
 
-  // Глобальная Realtime подписка — обновляет левую панель и чат без перезагрузки
+  // Автообновление серверных данных каждые 4 секунды
+  useEffect(() => {
+    const interval = setInterval(() => router.refresh(), 4000)
+    return () => clearInterval(interval)
+  }, [router])
+
+  // Синхронизация новых сообщений из пропов в messageMap
+  useEffect(() => {
+    setMessageMap(prev => {
+      const next = { ...prev }
+      let changed = false
+      messages.forEach(m => {
+        if (!next[m.session_id]) next[m.session_id] = []
+        if (!next[m.session_id].find(e => e.id === m.id)) {
+          next[m.session_id] = [...next[m.session_id], m]
+          changed = true
+        }
+      })
+      return changed ? next : prev
+    })
+  }, [messages])
+
+  // Синхронизация новых сессий из пропов в liveQuestionSessions
+  useEffect(() => {
+    setLiveQuestionSessions(prev => {
+      const prevIds = new Set(prev.map(s => s.id))
+      const incoming = questionSessions.filter(s => !prevIds.has(s.id))
+      if (incoming.length === 0) return prev
+      return [...incoming, ...prev]
+    })
+  }, [questionSessions])
+
+  // Глобальная Realtime подписка (работает если RLS настроен для операторов)
   useEffect(() => {
     const supabase = createBrowserSupabase()
     const channel = supabase
@@ -643,7 +677,6 @@ export default function AdminDashboard({ waitingOrders, readySessions, readyOrde
           if (existing.find(m => m.id === msg.id)) return prev
           return { ...prev, [msg.session_id]: [...existing, msg] }
         })
-        // Считаем только сообщения от клиента
         if (msg.sender_type === 'user') {
           setUnreadMap(prev => ({
             ...prev,
@@ -663,50 +696,6 @@ export default function AdminDashboard({ waitingOrders, readySessions, readyOrde
       .subscribe()
     return () => { supabase.removeChannel(channel) }
   }, [])
-
-  // Polling списка обращений (обход ограничений RLS на Realtime)
-  useEffect(() => {
-    if (tab !== 'support') return
-    let cancelled = false
-
-    async function refreshSessions() {
-      const res = await fetch('/api/admin/sessions', { cache: 'no-store' })
-      if (!res.ok || cancelled) return
-      const { sessions } = await res.json()
-      if (sessions) {
-        setLiveQuestionSessions((prev: ChatSession[]) => {
-          const prevIds = new Set(prev.map((s: ChatSession) => s.id))
-          const hasNew = sessions.some((s: ChatSession) => !prevIds.has(s.id))
-          if (!hasNew && sessions.length === prev.length) return prev
-          return sessions
-        })
-      }
-    }
-
-    refreshSessions()
-    const interval = setInterval(refreshSessions, 5000)
-    return () => { cancelled = true; clearInterval(interval) }
-  }, [tab])
-
-  // Polling свежих сообщений для открытой сессии (обход ограничений RLS на Realtime)
-  useEffect(() => {
-    if (!selectedId || tab === 'waiting') return
-    let cancelled = false
-
-    async function refreshMessages() {
-      const res = await fetch(`/api/admin/messages?sessionId=${selectedId}`, { cache: 'no-store' })
-      if (!res.ok || cancelled) return
-      const { messages: fetched } = await res.json()
-      if (fetched) {
-        setMessageMap(prev => ({ ...prev, [selectedId]: fetched }))
-        setUnreadMap(prev => ({ ...prev, [selectedId]: 0 }))
-      }
-    }
-
-    refreshMessages()
-    const interval = setInterval(refreshMessages, 3000)
-    return () => { cancelled = true; clearInterval(interval) }
-  }, [selectedId, tab])
 
   function handleSelect(id: string) {
     setSelectedId(id)
