@@ -37,18 +37,20 @@ async function getBotResponse(session: ChatSession, content: string): Promise<st
   if (content === '__reset') {
     await supabase
       .from('chat_sessions')
-      .update({ type: null, order_id: null, ticket_number: null })
+      .update({ type: null, order_id: null })
       .eq('id', session.id)
     return 'Привет! Чем могу помочь? Выберите вариант:'
   }
 
   // Выбор потока — работает в любом состоянии сессии
   if (content === 'Получить заказ') {
-    await supabase.from('chat_sessions').update({ type: 'order', order_id: null, ticket_number: null }).eq('id', session.id)
+    await supabase.from('chat_sessions').update({ type: 'order', order_id: null }).eq('id', session.id)
     return 'Введите номер вашего заказа (например: MM2-001000):'
   }
   if (content === 'Задать вопрос' || content === 'Связаться с тех поддержкой') {
-    await supabase.from('chat_sessions').update({ type: 'question', order_id: null, ticket_number: null }).eq('id', session.id)
+    // ticket_number не сбрасываем — постоянный маркер чата поддержки
+    // operator_id сбрасываем — чтобы при следующем открытии пришло новое уведомление о модераторе
+    await supabase.from('chat_sessions').update({ type: 'question', order_id: null, operator_id: null }).eq('id', session.id)
     return 'Напишите пожалуйста ваш вопрос'
   }
 

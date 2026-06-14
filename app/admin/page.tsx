@@ -39,7 +39,7 @@ async function getData() {
   const { data: questionSessions } = await supabase
     .from('chat_sessions')
     .select('*')
-    .eq('type', 'question')
+    .or('type.eq.question,ticket_number.not.is.null')
     .order('updated_at', { ascending: false })
 
   // Сообщения для всех сессий

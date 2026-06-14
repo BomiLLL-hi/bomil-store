@@ -18,7 +18,7 @@ export async function GET() {
   const { data: sessions } = await db
     .from('chat_sessions')
     .select('*')
-    .eq('type', 'question')
+    .or('type.eq.question,ticket_number.not.is.null')
     .order('updated_at', { ascending: false })
 
   return NextResponse.json({ sessions: sessions ?? [] })
