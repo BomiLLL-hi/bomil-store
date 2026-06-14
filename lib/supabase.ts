@@ -7,6 +7,7 @@ export async function getAllProducts() {
       .from('products')
       .select('*')
       .eq('hidden_status', false)
+      .order('sort_order', { ascending: true, nullsFirst: false })
       .order('created_at', { ascending: false })
 
     if (error) { console.error('getAllProducts error:', error); return [] }

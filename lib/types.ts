@@ -22,6 +22,7 @@ export interface Product {
   is_best_of_all_time: boolean
   extra_categories: string[]
   included_items: string[]
+  sort_order: number | null
   created_at: string
   updated_at: string
 }

@@ -26,6 +26,7 @@ type FormData = {
   is_set: boolean
   included_items: string[]
   images: string[]
+  sort_order: string
 }
 
 const emptyForm: FormData = {
@@ -34,7 +35,7 @@ const emptyForm: FormData = {
   type: 'knife', stock_status: 'in_stock',
   current_price: '', old_price: '',
   hidden_status: false, is_set: false, included_items: [],
-  images: [],
+  images: [], sort_order: '',
 }
 
 const CYRILLIC_MAP: Record<string, string> = {
@@ -68,6 +69,7 @@ function productToForm(p: Product): FormData {
     is_set: p.is_set,
     included_items: p.included_items ?? [],
     images: p.images,
+    sort_order: p.sort_order != null ? String(p.sort_order) : '',
   }
 }
 
@@ -88,6 +90,7 @@ function formToPayload(f: FormData) {
     is_set: f.is_set,
     included_items: f.included_items,
     images: f.images,
+    sort_order: f.sort_order !== '' ? parseInt(f.sort_order) : null,
   }
 }
 
@@ -442,6 +445,20 @@ function ProductForm({
           </div>
         </div>
 
+        {/* Позиция в каталоге */}
+        <div>
+          <label className={labelCls}>Позиция в каталоге</label>
+          <input
+            type="number"
+            min="1"
+            className={inputCls}
+            value={form.sort_order}
+            onChange={e => set('sort_order', e.target.value)}
+            placeholder="Не задана (в конце)"
+          />
+          <p className="text-[#444444] text-xs mt-1">1 — первый в каталоге. Без номера — в конце.</p>
+        </div>
+
         {/* Статус наличия */}
         <div>
           <label className={labelCls}>Наличие</label>
@@ -572,6 +589,9 @@ function ProductRow({ product, active, onClick }: { product: Product; active: bo
         <p className="text-[#555555] text-xs">{product.category} · {product.current_price} ₽</p>
       </div>
       <div className="flex items-center gap-1.5 flex-shrink-0">
+        {product.sort_order != null && (
+          <span className="text-[#8b5cf6] text-[10px] border border-[#8b5cf6]/30 rounded px-1">#{product.sort_order}</span>
+        )}
         {product.hidden_status && (
           <span className="text-[#555555] text-[10px] border border-[#333333] rounded px-1">скрыт</span>
         )}
