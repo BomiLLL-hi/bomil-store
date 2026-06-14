@@ -30,7 +30,7 @@ function AuthForm() {
     setLoading(false)
     if (error) {
       setError(error.message === 'Invalid login credentials'
-        ? 'Неверный email или пароль'
+        ? 'Неверный логин или пароль'
         : error.message)
       return
     }
