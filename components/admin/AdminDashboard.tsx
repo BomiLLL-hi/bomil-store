@@ -664,6 +664,26 @@ export default function AdminDashboard({ waitingOrders, readySessions, readyOrde
     return () => { supabase.removeChannel(channel) }
   }, [])
 
+  // Polling свежих сообщений для открытой сессии (обход ограничений RLS на Realtime)
+  useEffect(() => {
+    if (!selectedId || tab === 'waiting') return
+    let cancelled = false
+
+    async function refresh() {
+      const res = await fetch(`/api/admin/messages?sessionId=${selectedId}`)
+      if (!res.ok || cancelled) return
+      const { messages } = await res.json()
+      if (messages) {
+        setMessageMap(prev => ({ ...prev, [selectedId]: messages }))
+        setUnreadMap(prev => ({ ...prev, [selectedId]: 0 }))
+      }
+    }
+
+    refresh()
+    const interval = setInterval(refresh, 3000)
+    return () => { cancelled = true; clearInterval(interval) }
+  }, [selectedId, tab])
+
   function handleSelect(id: string) {
     setSelectedId(id)
     setUnreadMap(prev => ({ ...prev, [id]: 0 }))
