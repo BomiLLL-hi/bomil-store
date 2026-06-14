@@ -5,6 +5,11 @@ import { useApp } from './providers'
 import { useAuth } from './AuthProvider'
 import SearchOverlay from './SearchOverlay'
 
+const NAV_LINKS = [
+  { href: '/how-to-buy', label: 'Как купить?' },
+  { href: '/support', label: 'Техподдержка' },
+]
+
 export function HeaderInner() {
   const { lang, currency, setLang, setCurrency, t, cartCount, setCartOpen } = useApp()
   const { user, loading } = useAuth()
@@ -13,11 +18,22 @@ export function HeaderInner() {
     <>
       {/* Main header row */}
       <div className="h-16 flex items-center justify-between gap-4 px-4 md:px-6 max-w-7xl mx-auto w-full">
-        {/* Logo */}
-        <Link href="/" className="flex-shrink-0 font-bold text-xl tracking-tight">
-          <span className="text-white">BOMIL</span>
-          <span className="text-[#8b5cf6]"> SHOP</span>
-        </Link>
+        {/* Logo + nav links */}
+        <div className="flex items-center gap-4 flex-shrink-0">
+          <Link href="/" className="font-bold text-xl tracking-tight">
+            <span className="text-white">BOMIL</span>
+            <span className="text-[#8b5cf6]"> SHOP</span>
+          </Link>
+          {NAV_LINKS.map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              className="hidden md:block text-sm text-[#888888] hover:text-white transition-colors whitespace-nowrap"
+            >
+              {label}
+            </Link>
+          ))}
+        </div>
 
         {/* Desktop search */}
         <div className="hidden md:flex flex-1 max-w-lg">
@@ -90,9 +106,20 @@ export function HeaderInner() {
         </div>
       </div>
 
-      {/* Mobile search */}
-      <div className="md:hidden px-4 pb-3 max-w-7xl mx-auto w-full">
+      {/* Mobile search + nav links */}
+      <div className="md:hidden px-4 pb-3 max-w-7xl mx-auto w-full space-y-2">
         <SearchOverlay placeholder={t('search.placeholder')} className="w-full" />
+        <div className="flex gap-3">
+          {NAV_LINKS.map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              className="text-xs text-[#888888] hover:text-white transition-colors"
+            >
+              {label}
+            </Link>
+          ))}
+        </div>
       </div>
     </>
   )
