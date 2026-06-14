@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useApp } from './providers'
 
 export default function HeroSection() {
@@ -28,7 +29,23 @@ export default function HeroSection() {
         }}
       />
 
-      <div className="relative max-w-7xl mx-auto px-4 md:px-6 py-16 md:py-24 flex flex-col items-center text-center">
+      {/* Nav кнопки в правом верхнем углу */}
+      <div className="relative max-w-7xl mx-auto px-4 md:px-6 pt-4 flex justify-end gap-2">
+        <Link
+          href="/how-to-buy"
+          className="px-3 py-1.5 rounded-lg border border-[#333333] bg-[#111111]/60 text-[#888888] hover:border-[#8b5cf6]/60 hover:text-[#a78bfa] text-xs font-medium transition-colors backdrop-blur-sm"
+        >
+          Как купить?
+        </Link>
+        <Link
+          href="/support"
+          className="px-3 py-1.5 rounded-lg border border-[#333333] bg-[#111111]/60 text-[#888888] hover:border-[#8b5cf6]/60 hover:text-[#a78bfa] text-xs font-medium transition-colors backdrop-blur-sm"
+        >
+          Техподдержка
+        </Link>
+      </div>
+
+      <div className="relative max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-20 flex flex-col items-center text-center">
         {/* Badge */}
         <div className="animate-fade-in inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#8b5cf6]/30 bg-[#8b5cf6]/10 text-[#a78bfa] text-xs font-semibold uppercase tracking-widest mb-6">
           <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] animate-pulse" />
