@@ -13,9 +13,10 @@ export async function getAllProducts() {
       .eq('hidden_status', false)
       .order('created_at', { ascending: false })
 
-    if (error) return []
+    if (error) { console.error('getAllProducts error:', error); return [] }
     return data ?? []
-  } catch {
+  } catch (e) {
+    console.error('getAllProducts exception:', e)
     return []
   }
 }
