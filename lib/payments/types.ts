@@ -25,9 +25,7 @@ export interface PaymentProvider {
 }
 
 // Реестр подключённых провайдеров
+import { TrybitProvider } from './trybit'
 export const paymentProviders: PaymentProvider[] = [
-  // Добавляй провайдеры сюда:
-  // new YookassaProvider(),
-  // new CryptoCloudProvider(),
-  // new PaypalychProvider(),
+  new TrybitProvider(),
 ]

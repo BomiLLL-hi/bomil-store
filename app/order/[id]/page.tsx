@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { getOrderById, autoCancelIfExpired } from '@/lib/orders'
 import { paymentProviders } from '@/lib/payments/types'
 import CartClearer from './CartClearer'
+import PayButton from './PayButton'
 import type { Order } from '@/lib/types'
 
 const STATUS_LABELS: Record<string, { ru: string; color: string }> = {
@@ -121,12 +122,12 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
             ) : (
               <div className="space-y-2">
                 {paymentProviders.map(p => (
-                  <button
+                  <PayButton
                     key={p.id}
-                    className="w-full py-3 bg-[#8b5cf6] hover:bg-[#7c3aed] text-white font-semibold rounded-lg transition-colors text-sm"
-                  >
-                    {p.label_ru}
-                  </button>
+                    orderId={order.id}
+                    providerId={p.id}
+                    label={p.label_ru}
+                  />
                 ))}
               </div>
             )}

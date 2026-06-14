@@ -34,6 +34,20 @@ export async function updateOrderStatus(
   return !error
 }
 
+export async function updateOrderPayment(
+  id: string,
+  provider: string,
+  paymentId: string,
+  paymentUrl: string,
+) {
+  const supabase = createServiceSupabase()
+  const { error } = await supabase
+    .from('orders')
+    .update({ payment_provider: provider, payment_id: paymentId, payment_url: paymentUrl })
+    .eq('id', id)
+  return !error
+}
+
 // Отменяет заказ если он pending > 30 минут. Возвращает обновлённый заказ.
 export async function autoCancelIfExpired(order: Order): Promise<Order> {
   if (order.status !== 'pending') return order
