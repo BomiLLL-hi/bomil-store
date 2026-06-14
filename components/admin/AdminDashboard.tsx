@@ -146,6 +146,11 @@ function ChatPane({
   }, [messages.length, tempMessages.length])
 
   const allMessages = [...messages, ...tempMessages]
+  const FLOW_BUTTONS = new Set(['__reset', 'Получить заказ', 'Задать вопрос'])
+  const visibleMessages = allMessages.filter(msg =>
+    msg.sender_type !== 'bot' &&
+    !(msg.sender_type === 'user' && FLOW_BUTTONS.has(msg.content))
+  )
 
   async function sendReply() {
     const text = input.trim()
@@ -209,7 +214,7 @@ function ChatPane({
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
-        {allMessages.map(msg => {
+        {visibleMessages.map(msg => {
           const isOperator = msg.sender_type === 'operator'
           const isBot = msg.sender_type === 'bot'
           const isNew = !seenIds.current.has(msg.id)
