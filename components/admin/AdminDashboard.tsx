@@ -615,6 +615,9 @@ export default function AdminDashboard({ waitingOrders, readySessions, readyOrde
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const assignedSessions = useRef<Set<string>>(new Set())
 
+  // Живой список обращений тех поддержки — обновляется через Realtime
+  const [liveQuestionSessions, setLiveQuestionSessions] = useState<ChatSession[]>(questionSessions)
+
   // Карта сообщений по сессиям — обновляется в реальном времени
   const [messageMap, setMessageMap] = useState<Record<string, ChatMessage[]>>(() => {
     const map: Record<string, ChatMessage[]> = {}
@@ -648,6 +651,15 @@ export default function AdminDashboard({ waitingOrders, readySessions, readyOrde
           }))
         }
       })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'chat_sessions' }, payload => {
+        const session = payload.new as ChatSession
+        if (session.type !== 'question') return
+        setLiveQuestionSessions(prev => {
+          const exists = prev.find(s => s.id === session.id)
+          if (exists) return prev.map(s => s.id === session.id ? session : s)
+          return [session, ...prev]
+        })
+      })
       .subscribe()
     return () => { supabase.removeChannel(channel) }
   }, [])
@@ -657,7 +669,7 @@ export default function AdminDashboard({ waitingOrders, readySessions, readyOrde
     setUnreadMap(prev => ({ ...prev, [id]: 0 }))
 
     if (tab === 'support' && !assignedSessions.current.has(id)) {
-      const session = questionSessions.find(s => s.id === id)
+      const session = liveQuestionSessions.find(s => s.id === id)
       if (session && !session.operator_id) {
         assignedSessions.current.add(id)
         fetch('/api/admin/assign', {
@@ -680,14 +692,14 @@ export default function AdminDashboard({ waitingOrders, readySessions, readyOrde
   const tabs: { key: Tab; label: string; count: number }[] = [
     { key: 'waiting', label: 'Оплачен', count: waitingOrders.length },
     { key: 'ready', label: 'Готов к получению', count: readySessions.length },
-    { key: 'support', label: 'Тех поддержка', count: questionSessions.length },
+    { key: 'support', label: 'Тех поддержка', count: liveQuestionSessions.length },
     { key: 'reviews', label: 'Отзывы', count: 0 },
     { key: 'faq', label: 'FAQ', count: 0 },
   ]
 
   const selectedOrder = tab === 'waiting' ? waitingOrders.find(o => o.id === selectedId) : undefined
   const selectedSession = tab !== 'waiting'
-    ? (tab === 'ready' ? readySessions : questionSessions).find(s => s.id === selectedId)
+    ? (tab === 'ready' ? readySessions : liveQuestionSessions).find(s => s.id === selectedId)
     : undefined
   const selectedSessionOrder = selectedSession ? readyOrders.find(o => o.id === selectedSession.order_id) : undefined
   const sessionMessages = selectedSession ? (messageMap[selectedSession.id] ?? []) : []
@@ -749,9 +761,9 @@ export default function AdminDashboard({ waitingOrders, readySessions, readyOrde
               })
           )}
           {tab === 'support' && (
-            questionSessions.length === 0
+            liveQuestionSessions.length === 0
               ? <p className="text-[#555555] text-sm text-center py-8">Нет обращений</p>
-              : questionSessions.map(s => {
+              : liveQuestionSessions.map(s => {
                 const msgs = messageMap[s.id] ?? []
                 return (
                   <SessionCard
