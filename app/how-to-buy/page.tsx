@@ -17,7 +17,7 @@ export default function HowToBuyPage() {
       <h1 className="text-3xl font-bold text-white mb-10">Как купить?</h1>
 
       <section className="mb-12">
-        <h2 className="text-xl font-bold text-white mb-4">Покупка через Telegram</h2>
+        <h2 className="text-xl font-bold text-white mb-4">Туториал по покупке через Telegram</h2>
         <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-[#222222]">
           <iframe
             className="absolute inset-0 w-full h-full"
