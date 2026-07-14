@@ -30,7 +30,7 @@ export default function HowToBuyPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-bold text-white mb-4">Покупка через MAX</h2>
+        <h2 className="text-xl font-bold text-white mb-4">Туториал по покупке через MAX</h2>
         <div className="flex items-center justify-center w-full aspect-video rounded-2xl border border-[#222222] bg-[#111111] text-[#555555] text-sm">
           Видео скоро появится
         </div>
