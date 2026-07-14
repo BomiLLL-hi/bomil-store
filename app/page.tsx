@@ -1,6 +1,5 @@
 import { createServiceSupabase } from '@/lib/supabase-service'
 import HeroSection from '@/components/HeroSection'
-import TrustBlock from '@/components/TrustBlock'
 import FaqBlock from '@/components/FaqBlock'
 import type { FaqItem } from '@/lib/types'
 
@@ -22,7 +21,6 @@ export default async function HomePage() {
   return (
     <>
       <HeroSection />
-      <TrustBlock />
       <FaqBlock items={faqItems} />
     </>
   )
