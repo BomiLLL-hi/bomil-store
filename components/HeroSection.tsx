@@ -1,6 +1,6 @@
 'use client'
 
-const TELEGRAM_SHOP_URL = 'https://t.me/BomilShop_bot'
+const TELEGRAM_SHOP_URL = 'https://telegram.me/BomilShop_bot'
 const MAX_SHOP_URL = 'https://max.ru/id392301788835_bot'
 
 export default function HeroSection() {
