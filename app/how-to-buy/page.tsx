@@ -14,8 +14,27 @@ export default function HowToBuyPage() {
         </svg>
         На главную
       </Link>
-      <h1 className="text-3xl font-bold text-white mb-3">Как купить?</h1>
-      <p className="text-[#555555] text-sm">Страница в разработке.</p>
+      <h1 className="text-3xl font-bold text-white mb-10">Как купить?</h1>
+
+      <section className="mb-12">
+        <h2 className="text-xl font-bold text-white mb-4">Покупка через Telegram</h2>
+        <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-[#222222]">
+          <iframe
+            className="absolute inset-0 w-full h-full"
+            src="https://www.youtube-nocookie.com/embed/b9Uw13nCKZU"
+            title="Как купить через Telegram"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+      </section>
+
+      <section>
+        <h2 className="text-xl font-bold text-white mb-4">Покупка через MAX</h2>
+        <div className="flex items-center justify-center w-full aspect-video rounded-2xl border border-[#222222] bg-[#111111] text-[#555555] text-sm">
+          Видео скоро появится
+        </div>
+      </section>
     </div>
   )
 }
