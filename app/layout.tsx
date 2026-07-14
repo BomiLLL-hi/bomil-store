@@ -17,13 +17,13 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: 'MM2Store — Buy MM2 Items',
-    template: '%s | MM2Store',
+    default: 'BOMIL SHOP - купить скины из Murder Mystery 2',
+    template: '%s | BOMIL SHOP',
   },
   description: 'Покупайте предметы Murder Mystery 2 — ножи, пушки, питомцы и наборы. Быстрая доставка, проверенный продавец.',
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mm2store.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.bomilshop.ru'),
   openGraph: {
-    siteName: 'MM2Store',
+    siteName: 'BOMIL SHOP',
     type: 'website',
   },
   robots: {

@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { getAllProducts } from '@/lib/supabase'
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mm2store.com'
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.bomilshop.ru'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const products = await getAllProducts()

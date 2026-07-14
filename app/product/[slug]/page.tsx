@@ -41,10 +41,10 @@ export async function generateMetadata({
 
   return {
     title: product.title,
-    description: product.description || `Buy ${product.title} in MM2Store. Fast delivery.`,
+    description: product.description || `Buy ${product.title} in BOMIL SHOP. Fast delivery.`,
     openGraph: {
       title: product.title,
-      description: product.description || `Buy ${product.title} in MM2Store.`,
+      description: product.description || `Buy ${product.title} in BOMIL SHOP.`,
       images: product.images[0] ? [{ url: product.images[0] }] : [],
     },
   }
