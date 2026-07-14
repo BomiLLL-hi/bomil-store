@@ -1,5 +1,7 @@
 'use client'
 
+import Image from 'next/image'
+
 const TELEGRAM_SHOP_URL = 'https://telegram.me/BomilShop_bot'
 const MAX_SHOP_URL = 'https://max.ru/id392301788835_bot'
 
@@ -60,9 +62,7 @@ export default function HeroSection() {
             rel="noopener noreferrer"
             className="group relative flex-1 inline-flex items-center justify-center gap-2.5 px-6 py-4 bg-[#111111] hover:bg-[#1a1a1a] border border-[#8b5cf6]/40 hover:border-[#8b5cf6] text-white font-semibold rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-[#8b5cf6]/20 hover:scale-105 active:scale-100"
           >
-            <svg className="w-5 h-5 flex-shrink-0 text-[#a78bfa]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
+            <Image src="/max-icon.png" alt="" width={20} height={20} className="flex-shrink-0 rounded-md" />
             BOMIL SHOP в MAX
           </a>
         </div>
