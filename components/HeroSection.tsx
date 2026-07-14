@@ -39,7 +39,7 @@ export default function HeroSection() {
 
         {/* Subtitle */}
         <p className="animate-fade-in-up text-[#888888] text-base md:text-lg max-w-md mb-8 leading-relaxed" style={{ animationDelay: '120ms' }}>
-          Ножи, пушки, питомцы и наборы MM2 — быстрая доставка, проверенный продавец
+          Нажмите на кнопку ниже, чтобы перейти в магазин ☺️
         </p>
 
         {/* CTA — links to the shops */}
