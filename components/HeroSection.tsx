@@ -70,7 +70,7 @@ export default function HeroSection() {
 
         <Link
           href="/how-to-buy"
-          className="animate-fade-in-up mt-6 font-bold text-white hover:text-[#a78bfa] underline underline-offset-4 decoration-[#8b5cf6]/50 hover:decoration-[#a78bfa] transition-colors"
+          className="animate-fade-in-up mt-6 text-xl md:text-2xl font-bold text-white hover:text-[#a78bfa] underline underline-offset-4 decoration-[#8b5cf6]/50 hover:decoration-[#a78bfa] transition-colors"
           style={{ animationDelay: '220ms' }}
         >
           Туториал по покупке
