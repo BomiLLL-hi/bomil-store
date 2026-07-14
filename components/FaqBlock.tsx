@@ -4,6 +4,26 @@ import { useState } from 'react'
 import { useApp } from './providers'
 import type { FaqItem } from '@/lib/types'
 
+const URL_REGEX = /(https?:\/\/[^\s]+)/g
+
+function linkify(text: string) {
+  return text.split(URL_REGEX).map((part, i) =>
+    /^https?:\/\//.test(part) ? (
+      <a
+        key={i}
+        href={part}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-[#a78bfa] hover:text-[#c4b5fd] underline underline-offset-2"
+      >
+        {part}
+      </a>
+    ) : (
+      part
+    )
+  )
+}
+
 function FaqRow({ item, lang }: { item: FaqItem; lang: string }) {
   const [open, setOpen] = useState(false)
   const question = lang === 'ru' ? item.question_ru : item.question_en
@@ -27,7 +47,7 @@ function FaqRow({ item, lang }: { item: FaqItem; lang: string }) {
       </button>
       <div className={`grid transition-[grid-template-rows] duration-200 ease-out ${open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
         <div className="overflow-hidden">
-          <p className="text-[#888888] text-sm leading-relaxed pb-4">{answer}</p>
+          <p className="text-[#888888] text-sm leading-relaxed pb-4">{linkify(answer)}</p>
         </div>
       </div>
     </div>
