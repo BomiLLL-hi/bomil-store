@@ -1,7 +1,4 @@
-import { Suspense } from 'react'
-import { getAllProducts } from '@/lib/supabase'
 import { createServiceSupabase } from '@/lib/supabase-service'
-import CatalogClient from '@/components/CatalogClient'
 import HeroSection from '@/components/HeroSection'
 import TrustBlock from '@/components/TrustBlock'
 import FaqBlock from '@/components/FaqBlock'
@@ -20,14 +17,11 @@ async function getFaq(): Promise<FaqItem[]> {
 }
 
 export default async function HomePage() {
-  const [products, faqItems] = await Promise.all([getAllProducts(), getFaq()])
+  const faqItems = await getFaq()
 
   return (
     <>
       <HeroSection />
-      <Suspense>
-        <CatalogClient products={products} />
-      </Suspense>
       <TrustBlock />
       <FaqBlock items={faqItems} />
     </>
