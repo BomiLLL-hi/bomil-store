@@ -62,7 +62,7 @@ export default function HeroSection() {
             rel="noopener noreferrer"
             className="group relative flex-1 inline-flex items-center justify-center gap-2.5 px-6 py-4 bg-[#111111] hover:bg-[#1a1a1a] border border-[#8b5cf6]/40 hover:border-[#8b5cf6] text-white font-semibold rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-[#8b5cf6]/20 hover:scale-105 active:scale-100"
           >
-            <Image src="/max-icon.png" alt="" width={20} height={20} className="flex-shrink-0 rounded-md" />
+            <Image src="/max-icon.png" alt="" width={20} height={20} unoptimized className="flex-shrink-0 rounded-md" />
             BOMIL SHOP в MAX
           </a>
         </div>
