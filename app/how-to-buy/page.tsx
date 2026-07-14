@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import YouTubeFacade from '@/components/YouTubeFacade'
 
 export const metadata: Metadata = {
   title: 'Как купить — BOMIL SHOP',
@@ -19,13 +20,7 @@ export default function HowToBuyPage() {
       <section className="mb-12">
         <h2 className="text-xl font-bold text-white mb-4">Туториал по покупке через Telegram</h2>
         <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-[#222222]">
-          <iframe
-            className="absolute inset-0 w-full h-full"
-            src="https://www.youtube-nocookie.com/embed/b9Uw13nCKZU"
-            title="Как купить через Telegram"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
+          <YouTubeFacade videoId="b9Uw13nCKZU" title="Как купить через Telegram" />
         </div>
       </section>
 
