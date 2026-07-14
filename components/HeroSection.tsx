@@ -1,15 +1,9 @@
 'use client'
 
-import { useApp } from './providers'
+const TELEGRAM_SHOP_URL = 'https://t.me/BomilShop_bot'
+const MAX_SHOP_URL = 'https://max.ru/id392301788835_bot'
 
 export default function HeroSection() {
-  const { t } = useApp()
-
-  function scrollToCatalog() {
-    const el = document.getElementById('catalog')
-    if (el) el.scrollIntoView({ behavior: 'smooth' })
-  }
-
   return (
     <section className="relative overflow-hidden bg-[#0a0a0a] border-b border-[#1a1a1a]">
       {/* Background glow */}
@@ -46,34 +40,31 @@ export default function HeroSection() {
           Ножи, пушки, питомцы и наборы MM2 — быстрая доставка, проверенный продавец
         </p>
 
-        {/* CTA */}
-        <button
-          onClick={scrollToCatalog}
-          className="animate-fade-in-up group relative inline-flex items-center gap-2 px-6 py-3 bg-[#8b5cf6] hover:bg-[#7c3aed] text-white font-semibold rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-[#8b5cf6]/30 hover:scale-105 active:scale-100"
-          style={{ animationDelay: '180ms' }}
-        >
-          Смотреть товары
-          <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
+        {/* CTA — links to the shops */}
+        <div className="animate-fade-in-up flex flex-col sm:flex-row items-stretch gap-4 w-full max-w-md" style={{ animationDelay: '180ms' }}>
+          <a
+            href={TELEGRAM_SHOP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative flex-1 inline-flex items-center justify-center gap-2.5 px-6 py-4 bg-gradient-to-r from-[#8b5cf6] to-[#7c3aed] hover:from-[#7c3aed] hover:to-[#6d28d9] text-white font-semibold rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-[#8b5cf6]/30 hover:scale-105 active:scale-100"
+          >
+            <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.48 14.013l-2.95-.924c-.64-.204-.657-.64.136-.954l11.526-4.446c.537-.194 1.006.131.37.559z" />
+            </svg>
+            BOMIL SHOP в Telegram
+          </a>
 
-        {/* Stats */}
-        <div className="animate-fade-in-up flex items-center gap-8 mt-12 text-center" style={{ animationDelay: '240ms' }}>
-          <div>
-            <p className="text-white font-bold text-xl">500+</p>
-            <p className="text-[#555555] text-xs mt-0.5">товаров</p>
-          </div>
-          <div className="w-px h-8 bg-[#222222]" />
-          <div>
-            <p className="text-white font-bold text-xl">1000+</p>
-            <p className="text-[#555555] text-xs mt-0.5">заказов</p>
-          </div>
-          <div className="w-px h-8 bg-[#222222]" />
-          <div>
-            <p className="text-white font-bold text-xl">24/7</p>
-            <p className="text-[#555555] text-xs mt-0.5">поддержка</p>
-          </div>
+          <a
+            href={MAX_SHOP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative flex-1 inline-flex items-center justify-center gap-2.5 px-6 py-4 bg-[#111111] hover:bg-[#1a1a1a] border border-[#8b5cf6]/40 hover:border-[#8b5cf6] text-white font-semibold rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-[#8b5cf6]/20 hover:scale-105 active:scale-100"
+          >
+            <svg className="w-5 h-5 flex-shrink-0 text-[#a78bfa]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            BOMIL SHOP в MAX
+          </a>
         </div>
       </div>
     </section>
