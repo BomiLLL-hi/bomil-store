@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { useApp } from './providers'
 import { useAuth } from './AuthProvider'
-import SearchOverlay from './SearchOverlay'
 
 const NAV_LINKS = [
   { href: '/how-to-buy', label: 'Как купить?' },
@@ -35,11 +34,6 @@ export function HeaderInner() {
               </Link>
             ))}
           </div>
-        </div>
-
-        {/* Desktop search */}
-        <div className="hidden md:flex flex-1 max-w-lg">
-          <SearchOverlay placeholder={t('search.placeholder')} className="w-full" />
         </div>
 
         {/* Right controls */}
@@ -108,9 +102,8 @@ export function HeaderInner() {
         </div>
       </div>
 
-      {/* Mobile search + nav links */}
+      {/* Mobile nav links */}
       <div className="md:hidden px-4 pb-3 max-w-7xl mx-auto w-full space-y-2">
-        <SearchOverlay placeholder={t('search.placeholder')} className="w-full" />
         <div className="flex gap-3">
           {NAV_LINKS.map(({ href, label }) => (
             <Link
