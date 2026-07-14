@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 
 const TELEGRAM_SHOP_URL = 'https://telegram.me/BomilShop_bot'
 const MAX_SHOP_URL = 'https://max.ru/id392301788835_bot'
@@ -66,6 +67,14 @@ export default function HeroSection() {
             BOMIL SHOP в MAX
           </a>
         </div>
+
+        <Link
+          href="/how-to-buy"
+          className="animate-fade-in-up mt-6 font-bold text-white hover:text-[#a78bfa] underline underline-offset-4 decoration-[#8b5cf6]/50 hover:decoration-[#a78bfa] transition-colors"
+          style={{ animationDelay: '220ms' }}
+        >
+          Туториал по покупке
+        </Link>
       </div>
     </section>
   )
