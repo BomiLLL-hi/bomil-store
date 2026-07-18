@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import YouTubeFacade from '@/components/YouTubeFacade'
+import VkVideoFacade from '@/components/VkVideoFacade'
 
 export const metadata: Metadata = {
   title: 'Как купить — BOMIL SHOP',
@@ -26,8 +27,8 @@ export default function HowToBuyPage() {
 
       <section>
         <h2 className="text-xl font-bold text-white mb-4">Туториал по покупке через MAX</h2>
-        <div className="flex items-center justify-center w-full aspect-video rounded-2xl border border-[#222222] bg-[#111111] text-[#555555] text-sm">
-          Видео скоро появится
+        <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-[#222222]">
+          <VkVideoFacade oid="1123390484" id="456239017" title="Как купить через MAX" />
         </div>
       </section>
     </div>
