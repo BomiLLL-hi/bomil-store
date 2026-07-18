@@ -26,7 +26,8 @@ export default function HowToBuyPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-bold text-white mb-4">Туториал по покупке через MAX</h2>
+        <h2 className="text-xl font-bold text-white mb-1">Туториал по покупке через MAX</h2>
+        <p className="font-normal text-[#888888] text-sm mb-4">(Если видео не загружается, отключите пожалуйста VPN)</p>
         <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-[#222222]">
           <VkVideoFacade oid="1123390484" id="456239017" title="Как купить через MAX" />
         </div>
