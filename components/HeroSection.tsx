@@ -1,12 +1,10 @@
 'use client'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used by the archived MAX button below
 import Image from 'next/image'
 import Link from 'next/link'
 
 const TELEGRAM_SHOP_URL = 'https://telegram.me/BomilShop_bot'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used by the archived MAX button below
-const MAX_SHOP_URL = 'https://max.ru/id392301788835_bot'
+const MAX_SHOP_URL = 'https://max.ru/id392301788835_1_bot'
 
 export default function HeroSection() {
   return (
@@ -59,7 +57,6 @@ export default function HeroSection() {
             BOMIL SHOP в Telegram
           </a>
 
-          {/* BOMIL SHOP в MAX — temporarily archived, uncomment to restore
           <a
             href={MAX_SHOP_URL}
             target="_blank"
@@ -69,7 +66,6 @@ export default function HeroSection() {
             <Image src="/max-icon.png" alt="" width={20} height={20} unoptimized className="flex-shrink-0 rounded-md" />
             BOMIL SHOP в MAX
           </a>
-          */}
         </div>
 
         <Link
